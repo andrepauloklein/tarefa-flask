@@ -1,0 +1,7 @@
+String de conexão com o MongoDB Atlas
+
+gcloud run services update tarefas-flask --set-env-vars MONGO_URI="mongodb+srv://admin:XwHAjSgdfJsyvuMk@cluster0.85qjvgu.mongodb.net/tarefas?retryWrites=true&w=majority" --region us-central1
+
+
+
+git remote add origin https://github.com/andrepauloklein/tarefas-flask.git
