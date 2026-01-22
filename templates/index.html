@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Gerenciador de Tarefas</title>
+</head>
+<body>
+
+<h1>Gerenciador de Tarefas</h1>
+
+<form method="POST" action="/adicionar">
+    <p>
+        <input type="text"
+               name="descricao"
+               placeholder="Descrição da tarefa"
+               required>
+    </p>
+
+    <p>
+        Urgência (1 a 5):
+        <input type="number"
+               name="urgencia"
+               min="1"
+               max="5"
+               required>
+    </p>
+
+    <p>
+        Importância (1 a 5):
+        <input type="number"
+               name="importancia"
+               min="1"
+               max="5"
+               required>
+    </p>
+
+    <button type="submit">Adicionar tarefa</button>
+</form>
+
+<hr>
+
+<form method="GET" action="/ordenar">
+    <button type="submit">Ordenar por prioridade (decrescente)</button>
+</form>
+
+<hr>
+
+<h2>Lista de Tarefas</h2>
+
+{% if tarefas %}
+    <ul>
+    {% for tarefa in tarefas %}
+        <li>
+            <strong>{{ tarefa.descricao }}</strong><br>
+
+            Urgência: {{ tarefa.urgencia | default(0) }} |
+            Importância: {{ tarefa.importancia | default(0) }} |
+            Prioridade: {{ tarefa.prioridade | default(0) }}
+            <br>
+
+            <a href="/editar/{{ tarefa._id }}">Editar</a>
+            |
+            <a href="/excluir/{{ tarefa._id }}"
+               onclick="return confirm('Deseja realmente excluir esta tarefa?');">
+               Excluir
+            </a>
+        </li>
+        <br>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>Nenhuma tarefa cadastrada.</p>
+{% endif %}
+
+</body>
+</html>
+
+

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Tarefa</title>
+</head>
+<body>
+
+<h1>Editar Tarefa</h1>
+
+<form method="POST" action="/atualizar/{{ tarefa._id }}">
+
+    <label>
+        Descrição:
+        <input type="text"
+               name="descricao"
+               value="{{ tarefa.descricao | default('') }}"
+               required>
+    </label>
+    <br><br>
+
+    <label>
+        Urgência (1 a 5):
+        <input type="number"
+               name="urgencia"
+               min="1"
+               max="5"
+               value="{{ tarefa.urgencia | default(1) }}"
+               required>
+    </label>
+    <br><br>
+
+    <label>
+        Importância (1 a 5):
+        <input type="number"
+               name="importancia"
+               min="1"
+               max="5"
+               value="{{ tarefa.importancia | default(1) }}"
+               required>
+    </label>
+    <br><br>
+
+    <button type="submit">Salvar</button>
+</form>
+
+<br>
+<a href="/">Voltar</a>
+
+</body>
+</html>
+
