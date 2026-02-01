@@ -1,0 +1,22 @@
+steps:
+  # Build da imagem
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', '$LOCATION-docker.pkg.dev/$PROJECT_ID/tarefas-repo/tarefas-flask:$SHORT_SHA', '.']
+
+  # Push da imagem
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', '$LOCATION-docker.pkg.dev/$PROJECT_ID/tarefas-repo/tarefas-flask:$SHORT_SHA']
+
+  # Deploy no Cloud Run
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      [
+        'run','deploy','tarefas-flask',
+        '--image','$LOCATION-docker.pkg.dev/$PROJECT_ID/tarefas-repo/tarefas-flask:$SHORT_SHA',
+        '--region','$LOCATION',
+        '--platform','managed',
+        '--allow-unauthenticated'
+      ]
+
+images:
+- '$LOCATION-docker.pkg.dev/$PROJECT_ID/tarefas-repo/tarefas-flask:$SHORT_SHA'

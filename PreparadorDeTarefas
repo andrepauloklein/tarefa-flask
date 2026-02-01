@@ -172,3 +172,6 @@ gcloud run services update tarefas-flask --set-env-vars MONGO_URI="mongodb+srv:/
 
 
 git remote add origin https://github.com/andrepauloklein/tarefas-flask.git
+
+
+gcloud beta builds triggers update NOME_DO_SEU_GATILHO --logging=cloud-logging-only --region=us-central1
