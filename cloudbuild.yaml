@@ -22,7 +22,7 @@ steps:
       - 'managed'
       - '--allow-unauthenticated'
       - '--set-env-vars'
-      - 'MONGO_URI=mongodb+srv://admin:XwHAjSgdfJsyvuMk@cluster0.85qjvgu.mongodb.net/tarefas?retryWrites=true&w=majority'
+      - 'MONGO_URI=mongodb+srv://admin:Marcio031154@cluster0.85qjvgu.mongodb.net/tarefas?retryWrites=true&w=majority'
 
 options:
   logging: CLOUD_LOGGING_ONLY
