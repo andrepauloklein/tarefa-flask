@@ -1,24 +1,25 @@
 steps:
-  # Build da imagem
+  # PASSO 1: Transforma seu código em uma imagem (O que você já faz)
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', '$LOCATION-docker.pkg.dev/$PROJECT_ID/tarefas-repo/tarefas-flask:$SHORT_SHA', '.']
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/tarefa-flask', '.']
 
-  # Push da imagem
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', '$LOCATION-docker.pkg.dev/$PROJECT_ID/tarefas-repo/tarefas-flask:$SHORT_SHA']
-
-  # Deploy no Cloud Run
-  - name: 'gcr.io/cloud-builders/gcloud'
+  # PASSO 2: Pega essa imagem e joga no Cloud Run (O que está faltando!)
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
     args:
-      [
-        'run','deploy','tarefas-flask',
-        '--image','$LOCATION-docker.pkg.dev/$PROJECT_ID/tarefas-repo/tarefas-flask:$SHORT_SHA',
-        '--region','$LOCATION',
-        '--platform','managed',
-        '--allow-unauthenticated'
-      ]
+      - 'run'
+      - 'deploy'
+      - 'tarefa-flask'  # <-- Verifique se esse é o nome no seu Cloud Run
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/tarefa-flask'
+      - '--region'
+      - 'us-central1'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
 
-images:
-- '$LOCATION-docker.pkg.dev/$PROJECT_ID/tarefas-repo/tarefas-flask:$SHORT_SHA'
 options:
   logging: CLOUD_LOGGING_ONLY
+
+images:
+  - 'gcr.io/$PROJECT_ID/tarefa-flask'
