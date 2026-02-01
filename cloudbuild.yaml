@@ -20,3 +20,5 @@ steps:
 
 images:
 - '$LOCATION-docker.pkg.dev/$PROJECT_ID/tarefas-repo/tarefas-flask:$SHORT_SHA'
+options:
+  logging: CLOUD_LOGGING_ONLY
