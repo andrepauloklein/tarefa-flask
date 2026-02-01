@@ -22,7 +22,7 @@ steps:
       - 'managed'
       - '--allow-unauthenticated'
       - '--set-env-vars'
-      - 'MONGO_URI=cole_seu_link_do_atlas_aqui_dentro_das_aspas'
+      - 'MONGO_URI=mongodb+srv://admin:XwHAjSgdfJsyvuMk@cluster0.xxxx.mongodb.net/tarefas?retryWrites=true&w=majority'
 
 options:
   logging: CLOUD_LOGGING_ONLY
