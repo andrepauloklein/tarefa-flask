@@ -1,13 +1,13 @@
 steps:
-  # 1. Monta a imagem
+  # 1. Constrói a imagem
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 'gcr.io/$PROJECT_ID/tarefa-flask', '.']
 
-  # 2. SALVA a imagem no registro (Isso resolve o erro de 'not found')
+  # 2. Envia para o registro
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'gcr.io/$PROJECT_ID/tarefa-flask']
 
-  # 3. Faz o deploy no Cloud Run
+  # 3. Faz o deploy e INJETA a variável de conexão
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
     args:
@@ -21,10 +21,8 @@ steps:
       - '--platform'
       - 'managed'
       - '--allow-unauthenticated'
+      - '--set-env-vars'
+      - 'MONGO_URI=cole_seu_link_do_atlas_aqui_dentro_das_aspas'
 
 options:
   logging: CLOUD_LOGGING_ONLY
-
-# Isso também ajuda a garantir que a imagem seja salva:
-images:
-  - 'gcr.io/$PROJECT_ID/tarefa-flask'
