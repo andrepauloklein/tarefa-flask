@@ -2,11 +2,11 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Gerenciador de Tarefas Versão 1.1</title>
+    <title>Gerenciador de Tarefas Versão 1.2</title>
 </head>
 <body>
 
-<h1>Gerenciador de Tarefas V1.1</h1>
+<h1>Gerenciador de Tarefas V1.2</h1>
 
 <form method="POST" action="/adicionar">
     <p>
@@ -39,9 +39,9 @@
 
 <hr>
 
-<form method="GET" action="/ordenar">
+<!--<form method="GET" action="/ordenar">
     <button type="submit">Ordenar por prioridade (decrescente)</button>
-</form>
+</form> -->
 
 <hr>
 
@@ -58,9 +58,11 @@
             Prioridade: {{ tarefa.prioridade | default(0) }}
             <br>
 
-            <a href="/editar/{{ tarefa._id }}">Editar</a>
+            <!--<a href="/editar/{{ tarefa._id }}">Editar</a> -->
+            <a href="{{ url_for('editar', id=tarefa['_id']) }}">Editar</a>
             |
-            <a href="/excluir/{{ tarefa._id }}"
+            <!--<a href="/excluir/{{ tarefa._id }}" -->
+            <a href="{{ url_for('excluir', id=tarefa['_id']) }}">Excluir</a>
                onclick="return confirm('Deseja realmente excluir esta tarefa?');">
                Excluir
             </a>
