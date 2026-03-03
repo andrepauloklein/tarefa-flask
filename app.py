@@ -8,32 +8,26 @@ app = Flask(__name__)
 # ---------------------------------------------------------
 # Configuração do MongoDB
 # ---------------------------------------------------------
+# Busca a URI e o Nome do Banco das variáveis de ambiente da GCP
 mongo_uri = os.environ.get("MONGO_URI", "mongodb://localhost:27017/")
-#client = MongoClient(mongo_uri, serverSelectionTimeoutMS=5000)
-client = MongoClient(mongo_uri)
-#db = client["tarefa_db"]
-#colecao = db["tarefa"]
-
 db_name = os.environ.get("DB_NAME", "tarefa_db")
-print(f"DEBUG: O banco conectado é: {db_name}")
+
+client = MongoClient(mongo_uri)
 db = client[db_name]
 colecao = db["tarefa"]
 
-print("Conectando em:", mongo_uri)
-
+print(f"DEBUG: Conectado ao banco: {db_name}")
 
 # ---------------------------------------------------------
 # Listar tarefas
 # ---------------------------------------------------------
-
 @app.route("/")
 def index():
-    
     try:
-        #tarefas = list(colecao.find())
+        # Busca as tarefas ordenando pela prioridade (maior primeiro)
         tarefas = list(colecao.find().sort("prioridade", -1))
-
-
+        
+        # Garante que tarefas antigas sem o campo prioridade sejam calculadas na exibição
         for t in tarefas:
             if "prioridade" not in t:
                 u = t.get("urgencia", 0)
@@ -58,10 +52,6 @@ def adicionar():
         importancia = 0
 
     prioridade = urgencia * importancia
-    urgencia = int(urgencia)
-    importancia = int(importancia)
-    prioridade = urgencia * importancia
-
 
     colecao.insert_one({
         "descricao": descricao,
@@ -73,70 +63,16 @@ def adicionar():
     return redirect(url_for("index"))
 
 # ---------------------------------------------------------
-# Ordenar por prioridade
+# Editar tarefa (Carregar formulário)
 # ---------------------------------------------------------
-@app.route("/ordenar")
-def ordenar():
-    tarefas = list(colecao.find().sort("prioridade", -1))
-    return render_template("index.html", tarefas=tarefas)
-
-# ---------------------------------------------------------
-# Editar tarefa
-# ---------------------------------------------------------
-'''@app.route("/editar/<id>")
-def editar(id):
-    tarefa = colecao.find_one({"_id": ObjectId(id)})
-    return render_template("editar.html", tarefa=tarefa)
-    urgencia = int(request.form["urgencia"])
-    importancia = int(request.form["importancia"])
-
-    prioridade = urgencia * importancia
-
-colecao.update_one(
-    {"_id": ObjectId(id)},
-    {"$set": {
-        "descricao": request.form["descricao"],
-        "urgencia": urgencia,
-        "importancia": importancia,
-        "prioridade": prioridade
-    }}
-)'''
 @app.route("/editar/<id>")
 def editar(id):
-    # Aqui o 'id' vem da URL, então funciona corretamente
     tarefa = colecao.find_one({"_id": ObjectId(id)})
     return render_template("editar.html", tarefa=tarefa)
 
-
-
-
 # ---------------------------------------------------------
-# Atualizar tarefa
+# Atualizar tarefa (Salvar mudanças)
 # ---------------------------------------------------------
-'''@app.route("/atualizar/<id>", methods=["POST"])
-def atualizar(id):
-    descricao = request.form.get("descricao", "")
-    try:
-        urgencia = int(request.form.get("urgencia", 0))
-        importancia = int(request.form.get("importancia", 0))
-    except ValueError:
-        urgencia = 0
-        importancia = 0
-
-    prioridade = urgencia * importancia
-
-    colecao.update_one(
-        {"_id": ObjectId(id)},
-        {"$set": {
-            "descricao": descricao,
-            "urgencia": urgencia,
-            "importancia": importancia,
-            "prioridade": prioridade
-        }}
-    )
-
-    return redirect(url_for("index"))'''
-
 @app.route("/atualizar/<id>", methods=["POST"])
 def atualizar(id):
     descricao = request.form.get("descricao", "")
@@ -161,8 +97,6 @@ def atualizar(id):
 
     return redirect(url_for("index"))
 
-
-
 # ---------------------------------------------------------
 # Excluir tarefa
 # ---------------------------------------------------------
@@ -171,13 +105,11 @@ def excluir(id):
     colecao.delete_one({"_id": ObjectId(id)})
     return redirect(url_for("index"))
 
-
-tarefas_sem_prioridade = colecao.find({"prioridade": {"$exists": False}})
-
-
-# --- MIGRACAO CORRIGIDA ---
+# ---------------------------------------------------------
+# Migração Inicial (Garante que o banco novo tenha as prioridades)
+# ---------------------------------------------------------
 try:
-    # Transformamos em lista para garantir a iteração
+    # Busca apenas quem não tem o campo prioridade
     tarefas_sem_prioridade = list(colecao.find({"prioridade": {"$exists": False}}))
 
     for t in tarefas_sem_prioridade:
@@ -185,16 +117,18 @@ try:
         i = t.get("importancia", 0)
         prio_calculada = u * i
 
-        # ESTE COMANDO PRECISA ESTAR INDENTADO (DENTRO DO FOR)
+        # CORREÇÃO: O update_one deve estar DENTRO do loop 'for'
         colecao.update_one(
             {"_id": t["_id"]},
             {"$set": {"prioridade": prio_calculada}}
         )
 except Exception as e:
-    print(f"Aviso: Não foi possível realizar a migração inicial: {e}")
+    print(f"Aviso: Erro na migração inicial: {e}")
 
-# iniciar servidor apos a migracao
+# ---------------------------------------------------------
+# Iniciar Servidor (Configuração para Cloud Run)
+# ---------------------------------------------------------
 if __name__ == "__main__":
-    # O Cloud Run define a porta na variável de ambiente PORT
+    # O Cloud Run exige que o app ouça na porta definida pela variável PORT
     port = int(os.environ.get("PORT", 8080))
     app.run(host='0.0.0.0', port=port)
