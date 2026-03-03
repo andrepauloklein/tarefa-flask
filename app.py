@@ -11,7 +11,11 @@ app = Flask(__name__)
 mongo_uri = os.environ.get("MONGO_URI", "mongodb://localhost:27017/")
 client = MongoClient(mongo_uri, serverSelectionTimeoutMS=5000)
 
-db = client["tarefa_db"]
+#db = client["tarefa_db"]
+#colecao = db["tarefa"]
+
+db_name = os.environ.get("DB_NAME", "tarefa_db")
+db = client[db_name]
 colecao = db["tarefa"]
 
 print("Conectando em:", mongo_uri)
