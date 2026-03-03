@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for
+#from flask import Flask, render_template, request, redirect, url_for
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 
@@ -9,8 +9,8 @@ app = Flask(__name__)
 # Configuração do MongoDB
 # ---------------------------------------------------------
 mongo_uri = os.environ.get("MONGO_URI", "mongodb://localhost:27017/")
-client = MongoClient(mongo_uri, serverSelectionTimeoutMS=5000)
-
+#client = MongoClient(mongo_uri, serverSelectionTimeoutMS=5000)
+client = MongoClient(mongo_uri)
 #db = client["tarefa_db"]
 #colecao = db["tarefa"]
 
