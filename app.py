@@ -175,21 +175,26 @@ def excluir(id):
 tarefas_sem_prioridade = colecao.find({"prioridade": {"$exists": False}})
 
 
+# --- MIGRACAO CORRIGIDA ---
 try:
-    tarefas_sem_prioridade = colecao.find({"prioridade": {"$exists": False}})
+    # Transformamos em lista para garantir a iteração
+    tarefas_sem_prioridade = list(colecao.find({"prioridade": {"$exists": False}}))
 
     for t in tarefas_sem_prioridade:
         u = t.get("urgencia", 0)
         i = t.get("importancia", 0)
-        prioridade = u * i
+        prio_calculada = u * i
 
+        # ESTE COMANDO PRECISA ESTAR INDENTADO (DENTRO DO FOR)
         colecao.update_one(
             {"_id": t["_id"]},
-            {"$set": {"prioridade": prioridade}}
-    )
+            {"$set": {"prioridade": prio_calculada}}
+        )
 except Exception as e:
     print(f"Aviso: Não foi possível realizar a migração inicial: {e}")
 
 # iniciar servidor apos a migracao
 if __name__ == "__main__":
-    app.run(debug=True)
+    # O Cloud Run define a porta na variável de ambiente PORT
+    port = int(os.environ.get("PORT", 8080))
+    app.run(host='0.0.0.0', port=port)
