@@ -15,6 +15,7 @@ client = MongoClient(mongo_uri)
 #colecao = db["tarefa"]
 
 db_name = os.environ.get("DB_NAME", "tarefa_db")
+print(f"DEBUG: O banco conectado é: {db_name}")
 db = client[db_name]
 colecao = db["tarefa"]
 
@@ -182,9 +183,9 @@ try:
         i = t.get("importancia", 0)
         prioridade = u * i
 
-    colecao.update_one(
-        {"_id": t["_id"]},
-        {"$set": {"prioridade": prioridade}}
+        colecao.update_one(
+            {"_id": t["_id"]},
+            {"$set": {"prioridade": prioridade}}
     )
 except Exception as e:
     print(f"Aviso: Não foi possível realizar a migração inicial: {e}")
