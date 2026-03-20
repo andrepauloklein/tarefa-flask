@@ -10,14 +10,23 @@ app = Flask(__name__)
 # ---------------------------------------------------------
 # Busca a URI e o Nome do Banco das variáveis de ambiente da GCP
 mongo_uri = os.environ.get("MONGO_URI", "mongodb://localhost:27017/")
-db_name = os.environ.get("DB_NAME", "tarefa_db")
+
+db_name = os.environ.get("DB_NAME", "tarefa_db").strip()
 
 client = MongoClient(mongo_uri)
 db = client[db_name]
 colecao = db["tarefa"]
 
+print(f"DEBUG:variável de ambiente MONGO_URI = {mongo_uri}")
 print(f"DEBUG: Conectado ao banco: {db_name}")
 
+def get_next_sequence(name):
+    counter = db.counters.find_one_and_update(
+        {"_id": name},
+        {"$inc": {"seq": 1}},
+        return_document=True
+    )
+    return counter["seq"]
 # ---------------------------------------------------------
 # Listar tarefas
 # ---------------------------------------------------------

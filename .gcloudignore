@@ -1,0 +1,18 @@
+# Ignorar pastas de ambiente virtual
+venv/
+env/
+.venv/
+
+# Ignorar pastas do Git
+.git/
+.gitignore
+
+# Ignorar arquivos de sistema e nuvem
+.dropbox
+.dropbox.attr
+desktop.ini
+$RECYCLE.BIN/
+
+# Ignorar cache de Python
+**/__pycache__/
+*.pyc
