@@ -51,6 +51,7 @@
     <ul>
     {% for tarefa in tarefas %}
         <li>
+             <strong>{{ loop.index }}.</strong> {{ tarefa.nome }}
             <strong>{{ tarefa.descricao }}</strong><br>
 
             Urgência: {{ tarefa.urgencia | default(0) }} |
