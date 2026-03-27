@@ -1,3 +1,4 @@
+print("🔥🔥🔥 NOVO APP CARREGADO 🔥🔥🔥")
 import os
 from flask import Flask, render_template, request, redirect, url_for
 from pymongo import MongoClient
@@ -20,13 +21,6 @@ colecao = db["tarefa"]
 print(f"DEBUG:variável de ambiente MONGO_URI = {mongo_uri}")
 print(f"DEBUG: Conectado ao banco: {db_name}")
 
-def get_next_sequence(name):
-    counter = db.counters.find_one_and_update(
-        {"_id": name},
-        {"$inc": {"seq": 1}},
-        return_document=True
-    )
-    return counter["seq"]
 # ---------------------------------------------------------
 # Listar tarefas
 # ---------------------------------------------------------
