@@ -3,6 +3,7 @@ import os
 from flask import Flask, render_template, request, redirect, url_for
 from pymongo import MongoClient
 from bson.objectid import ObjectId
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -60,7 +61,8 @@ def adicionar():
         "descricao": descricao,
         "urgencia": urgencia,
         "importancia": importancia,
-        "prioridade": prioridade
+        "prioridade": prioridade,
+        "data_criacao": datetime.now().strftime("%d/%m/%Y %H:%M")
     })
 
     return redirect(url_for("index"))
