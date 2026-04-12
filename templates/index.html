@@ -3,77 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <title>Gerenciador de Tarefas Versão 1.2.3</title>
+    <style>
+        .btn-excluir { color: red; text-decoration: none; }
+        .btn-excluir:hover { font-weight: bold; }
+        button { cursor: pointer; }
+    </style>
 </head>
 <body>
-<!--
+
 <h1>Gerenciador de Tarefas V1.2.3</h1>
 
 <form method="POST" action="/adicionar">
-    <p>
-        <input type="text"
-               name="descricao"
-               placeholder="Descrição da tarefa"
-               required>
-    </p>
+    <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+            <td valign="top" style="padding-right: 60px;">
+                <p style="margin-top: 0;">
+                    <input type="text" name="descricao" placeholder="Descrição da tarefa" required style="width: 250px;">
+                </p>
+                <p>
+                    Urgência (1-5): 
+                    <input type="number" name="urgencia" min="1" max="5" required style="width: 40px;">
+                </p>
+                <p>
+                    Importância (1-5): 
+                    <input type="number" name="importancia" min="1" max="5" required style="width: 40px;">
+                </p>
+                <button type="submit">Adicionar tarefa</button>
+            </td>
 
-    <p>
-        Urgência (1 a 5):
-        <input type="number"
-               name="urgencia"
-               min="1"
-               max="5"
-               required>
-    </p>
+            <td valign="top">
+                <div style="font-size: 0.9em; font-weight: bold; margin-bottom: 10px;">
+                    Ordenação
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 5px;">
+                    <a href="/?ordem=importancia">
+                        <button type="button" style="width: 140px; text-align: left; background-color: {% if ordem == 'importancia' %}lightblue{% else %}white{% endif %}; font-weight: {% if ordem == 'importancia' %}bold{% else %}normal{% endif %};">
+                            Importância
+                        </button>
+                    </a>
 
-    <p>
-        Importância (1 a 5):
-        <input type="number"
-               name="importancia"
-               min="1"
-               max="5"
-               required>
-    </p>
+                    <a href="/?ordem=alfabetica">
+                        <button type="button" style="width: 140px; text-align: left; background-color: {% if ordem == 'alfabetica' %}lightblue{% else %}white{% endif %}; font-weight: {% if ordem == 'alfabetica' %}bold{% else %}normal{% endif %};">
+                            Alfabética
+                        </button>
+                    </a>
 
-    <button type="submit">Adicionar tarefa</button>
+                    <a href="/?ordem=insercao">
+                        <button type="button" style="width: 140px; text-align: left; background-color: {% if ordem == 'insercao' %}lightblue{% else %}white{% endif %}; font-weight: {% if ordem == 'insercao' %}bold{% else %}normal{% endif %};">
+                            Data de Inserção
+                        </button>
+                    </a>
+                </div>
+            </td>
+        </tr>
+    </table>
 </form>
--->
-<h1>Gerenciador de Tarefas V1.2.2</h1>
-
-<h3 style="margin-bottom: 5px; font-weight: normal;">Ordenação</h3>
-
-<div style="margin-bottom: 15px;">
-    <a href="/?ordem=importancia">
-        <button style="
-            background-color: {% if ordem == 'importancia' %}lightblue{% else %}white{% endif %};
-            font-weight: {% if ordem == 'importancia' %}bold{% else %}normal{% endif %};
-        ">
-            Importância
-        </button>
-    </a>
-
-    <a href="/?ordem=alfabetica">
-        <button style="
-            background-color: {% if ordem == 'alfabetica' %}lightblue{% else %}white{% endif %};
-            font-weight: {% if ordem == 'alfabetica' %}bold{% else %}normal{% endif %};
-        ">
-            Alfabética
-        </button>
-    </a>
-
-    <a href="/?ordem=insercao">
-        <button style="
-            background-color: {% if ordem == 'insercao' %}lightblue{% else %}white{% endif %};
-            font-weight: {% if ordem == 'insercao' %}bold{% else %}normal{% endif %};
-        ">
-            Inserção
-        </button>
-    </a>
-</div>
-<hr>
-
-<!--<form method="GET" action="/ordenar">
-    <button type="submit">Ordenar por prioridade (decrescente)</button>
-</form> -->
 
 <hr>
 
@@ -83,7 +67,7 @@
     <ul>
     {% for tarefa in tarefas %}
         <li>
-             <strong>{{ loop.index }}.</strong> {{ tarefa.nome }}
+            <strong>{{ loop.index }}.</strong> 
             <strong>{{ tarefa.descricao }}</strong><br>
 
             Urgência: {{ tarefa.urgencia | default(0) }} |
@@ -92,18 +76,12 @@
             Inserida em: {{ tarefa.data_criacao if tarefa.data_criacao else "Sem data" }}
             <br>
 
-            <!--<a href="/editar/{{ tarefa._id }}">Editar</a> -->
             <a href="{{ url_for('editar', id=tarefa['_id']) }}">Editar</a>
             |
-            <!--<a href="/excluir/{{ tarefa._id }}" -->
-         <!--   <a href="{{ url_for('excluir', id=tarefa['_id']) }}">Excluir</a>
+            <a href="{{ url_for('excluir', id=tarefa['_id']) }}" 
+               class="btn-excluir"
                onclick="return confirm('Deseja realmente excluir esta tarefa?');">
-               Excluir -->
-               <a href="{{ url_for('excluir', id=tarefa['_id']) }}" 
-                 class="btn btn-danger"
-                 onclick="return confirm('Deseja realmente excluir esta tarefa?');">
-                 Excluir
-</a>
+               Excluir
             </a>
         </li>
         <br>
@@ -115,5 +93,3 @@
 
 </body>
 </html>
-
-

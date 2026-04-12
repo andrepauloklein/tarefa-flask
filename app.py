@@ -17,7 +17,7 @@ db_name = os.environ.get("DB_NAME", "tarefa_db").strip()
 
 client = MongoClient(mongo_uri)
 db = client[db_name]
-colecao = db["tarefa"]
+collection = db["tarefa"]
 
 print(f"DEBUG:variável de ambiente MONGO_URI = {mongo_uri}")
 print(f"DEBUG: Conectado ao banco: {db_name}")
@@ -25,22 +25,30 @@ print(f"DEBUG: Conectado ao banco: {db_name}")
 # ---------------------------------------------------------
 # Listar tarefas
 # ---------------------------------------------------------
-@app.route("/")
-def index():
-    try:
+#@app.route("/")
+#def index():
+#    try:
         # Busca as tarefas ordenando pela prioridade (maior primeiro)
-        tarefas = list(colecao.find().sort("prioridade", -1))
+#        tarefas = list(colecao.find().sort("prioridade", -1))
         
         # Garante que tarefas antigas sem o campo prioridade sejam calculadas na exibição
-        for t in tarefas:
-            if "prioridade" not in t:
-                u = t.get("urgencia", 0)
-                i = t.get("importancia", 0)
-                t["prioridade"] = u * i 
+    #        if "prioridade" not in t:
+     ######return f"Erro de conexão com o MongoDB: {e}", 500
 
-        return render_template("index.html", tarefas=tarefas)
-    except Exception as e:
-        return f"Erro de conexão com o MongoDB: {e}", 500
+#from flask import request
+
+@app.route('/')
+def index():
+    ordem = request.args.get('ordem', 'importancia')
+
+    if ordem == 'alfabetica':
+        tarefas = list(collection.find().sort("descricao", 1))
+    elif ordem == 'insercao':
+        tarefas = list(collection.find().sort("_id", 1))
+    else:
+        tarefas = list(collection.find().sort("importancia", -1))
+
+    return render_template('index.html', tarefas=tarefas, ordem=ordem)
 
 # ---------------------------------------------------------
 # Adicionar tarefa
@@ -57,7 +65,7 @@ def adicionar():
 
     prioridade = urgencia * importancia
 
-    colecao.insert_one({
+    collection.insert_one({
         "descricao": descricao,
         "urgencia": urgencia,
         "importancia": importancia,
@@ -72,7 +80,7 @@ def adicionar():
 # ---------------------------------------------------------
 @app.route("/editar/<id>")
 def editar(id):
-    tarefa = colecao.find_one({"_id": ObjectId(id)})
+    tarefa = collection.find_one({"_id": ObjectId(id)})
     return render_template("editar.html", tarefa=tarefa)
 
 # ---------------------------------------------------------
@@ -90,7 +98,7 @@ def atualizar(id):
 
     prioridade = urgencia * importancia
 
-    colecao.update_one(
+    collection.update_one(
         {"_id": ObjectId(id)},
         {"$set": {
             "descricao": descricao,
@@ -107,7 +115,7 @@ def atualizar(id):
 # ---------------------------------------------------------
 @app.route("/excluir/<id>")
 def excluir(id):
-    colecao.delete_one({"_id": ObjectId(id)})
+    collection.delete_one({"_id": ObjectId(id)})
     return redirect(url_for("index"))
 
 # ---------------------------------------------------------
@@ -115,7 +123,7 @@ def excluir(id):
 # ---------------------------------------------------------
 try:
     # Busca apenas quem não tem o campo prioridade
-    tarefas_sem_prioridade = list(colecao.find({"prioridade": {"$exists": False}}))
+    tarefas_sem_prioridade = list(collection.find({"prioridade": {"$exists": False}}))
 
     for t in tarefas_sem_prioridade:
         u = t.get("urgencia", 0)
@@ -123,7 +131,7 @@ try:
         prio_calculada = u * i
 
         # CORREÇÃO: O update_one deve estar DENTRO do loop 'for'
-        colecao.update_one(
+        collection.update_one(
             {"_id": t["_id"]},
             {"$set": {"prioridade": prio_calculada}}
         )
