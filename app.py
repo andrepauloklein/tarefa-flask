@@ -4,6 +4,8 @@ from flask import Flask, render_template, request, redirect, url_for
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from datetime import datetime, timedelta
+import pytz
+fuso_br = pytz.timezone('America/Sao_Paulo')
 
 app = Flask(__name__)
 
@@ -61,7 +63,8 @@ def adicionar():
         "importancia": importancia,
         "prioridade": prioridade,
         #"data_criacao": datetime.now().strftime("%d/%m/%Y %H:%M")
-        "data_criacao": (datetime.now() - timedelta(hours=3)).strftime("%d/%m/%Y %H:%M")
+
+        "data_criacao": datetime.now(fuso_br).strftime("%d/%m/%Y %H:%M")
     })
 
     return redirect(url_for("index"))
