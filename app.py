@@ -25,28 +25,18 @@ print(f"DEBUG: Conectado ao banco: {db_name}")
 # ---------------------------------------------------------
 # Listar tarefas
 # ---------------------------------------------------------
-#@app.route("/")
-#def index():
-#    try:
-        # Busca as tarefas ordenando pela prioridade (maior primeiro)
-#        tarefas = list(colecao.find().sort("prioridade", -1))
-        
-        # Garante que tarefas antigas sem o campo prioridade sejam calculadas na exibição
-    #        if "prioridade" not in t:
-     ######return f"Erro de conexão com o MongoDB: {e}", 500
 
-#from flask import request
 
 @app.route('/')
 def index():
-    ordem = request.args.get('ordem', 'importancia')
+    ordem = request.args.get('ordem', 'prioridade')
 
     if ordem == 'alfabetica':
         tarefas = list(collection.find().sort("descricao", 1))
     elif ordem == 'insercao':
         tarefas = list(collection.find().sort("_id", 1))
     else:
-        tarefas = list(collection.find().sort("importancia", -1))
+        tarefas = list(collection.find().sort("prioridade", -1))
 
     return render_template('index.html', tarefas=tarefas, ordem=ordem)
 
