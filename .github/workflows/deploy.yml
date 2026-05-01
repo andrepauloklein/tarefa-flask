@@ -34,5 +34,5 @@ jobs:
           --region us-central1 \
           --platform managed \
           --allow-unauthenticated
-          - name: Test project id
-            run: echo "Projeto: ${{ secrets.GCP_PROJECT_ID }}"
+    - name: Test project id
+      run: echo "Projeto: ${{ secrets.GCP_PROJECT_ID }}"
