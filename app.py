@@ -32,15 +32,26 @@ print(f"DEBUG: Conectado ao banco: {db_name}")
 @app.route('/')
 def index():
     ordem = request.args.get('ordem', 'prioridade')
+    busca = request.args.get('busca', '')
+
+    filtro = {}
+
+    if busca:
+        filtro["descricao"] = {"$regex": busca, "$options": "i"}
 
     if ordem == 'alfabetica':
-        tarefas = list(collection.find().sort("descricao", 1))
+        tarefas = list(collection.find(filtro).sort("descricao", 1))
     elif ordem == 'insercao':
-        tarefas = list(collection.find().sort("_id", 1))
+        tarefas = list(collection.find(filtro).sort("_id", 1))
     else:
-        tarefas = list(collection.find().sort("prioridade", -1))
+        tarefas = list(collection.find(filtro).sort("prioridade", -1))
 
-    return render_template('index.html', tarefas=tarefas, ordem=ordem)
+    return render_template(
+        'index.html',
+        tarefas=tarefas,
+        ordem=ordem,
+        busca=busca
+    )
 
 # ---------------------------------------------------------
 # Adicionar tarefa
@@ -62,8 +73,6 @@ def adicionar():
         "urgencia": urgencia,
         "importancia": importancia,
         "prioridade": prioridade,
-        #"data_criacao": datetime.now().strftime("%d/%m/%Y %H:%M")
-
         "data_criacao": datetime.now(fuso_br).strftime("%d/%m/%Y %H:%M")
     })
 

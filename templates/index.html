@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Gerenciador de Tarefas Versão 2.2</title>
+    <title>Gerenciador de Tarefas Versão 2.3</title>
     <style>
         .btn-excluir { color: red; text-decoration: none; }
         .btn-excluir:hover { font-weight: bold; }
@@ -11,12 +11,15 @@
 </head>
 <body>
 
-<h1>Gerenciador de Tarefas V2.2</h1>
+<h1>Gerenciador de Tarefas V2.3</h1>
 
-<form method="POST" action="/adicionar">
-    <table border="0" cellpadding="0" cellspacing="0">
-        <tr>
-            <td valign="top" style="padding-right: 60px;">
+<table border="0" cellpadding="0" cellspacing="0">
+    <tr>
+
+        <!-- ESQUERDA (FORM ADICIONAR) -->
+        <td valign="top" style="padding-right: 60px;">
+
+            <form method="POST" action="/adicionar">
                 <p style="margin-top: 0;">
                     <input type="text" name="descricao" placeholder="Descrição da tarefa" required style="width: 250px;">
                 </p>
@@ -29,39 +32,63 @@
                     <input type="number" name="importancia" min="1" max="5" required style="width: 40px;">
                 </p>
                 <button type="submit">Adicionar tarefa</button>
-            </td>
+            </form>
 
-            <td valign="top">
+        </td>
+
+        <!-- DIREITA (ORDENAÇÃO + BUSCA) -->
+        <td valign="top">
+
+            <form method="GET" action="/">
+
                 <div style="font-size: 0.9em; font-weight: bold; margin-bottom: 10px;">
                     Ordenação
                 </div>
+
                 <div style="display: flex; flex-direction: column; gap: 5px;">
-                    <a href="/?ordem=prioridade">
-                        <button type="button" style="width: 140px; text-align: left; background-color: {% if ordem == 'prioridade' %}lightblue{% else %}white{% endif %}; font-weight: {% if ordem == 'prioridade' %}bold{% else %}normal{% endif %};">
-                            Prioridade
-                        </button>
-                    </a>
 
-                    <a href="/?ordem=alfabetica">
-                        <button type="button" style="width: 140px; text-align: left; background-color: {% if ordem == 'alfabetica' %}lightblue{% else %}white{% endif %}; font-weight: {% if ordem == 'alfabetica' %}bold{% else %}normal{% endif %};">
-                            Alfabética
-                        </button>
-                    </a>
+                    <button name="ordem" value="prioridade" type="submit" style="width: 140px;">
+                        Prioridade
+                    </button>
 
-                    <a href="/?ordem=insercao">
-                        <button type="button" style="width: 140px; text-align: left; background-color: {% if ordem == 'insercao' %}lightblue{% else %}white{% endif %}; font-weight: {% if ordem == 'insercao' %}bold{% else %}normal{% endif %};">
-                            Data de Inserção
-                        </button>
-                    </a>
+                    <button name="ordem" value="alfabetica" type="submit" style="width: 140px;">
+                        Alfabética
+                    </button>
+
+                    <button name="ordem" value="insercao" type="submit" style="width: 140px;">
+                        Data de Inserção
+                    </button>
+
                 </div>
-            </td>
-        </tr>
-    </table>
-</form>
+
+                        <!-- BUSCA (EXATAMENTE ONDE VOCÊ QUER) -->
+                <!--                 <div style="margin-top:10px;">
+                   <input type="text"
+                           name="busca"
+                           placeholder="🔍 Buscar..."
+                           value="{{ busca or '' }}"
+                           style="padding:5px; width:180px;">
+
+                    <button type="submit">Buscar</button>
+                </div>
+            -->
+            </form>
+            <div style="margin-top:10px;">
+                <form method="GET" action="/">
+                   <input type="text"
+                    name="busca"
+                    placeholder="🔍 Buscar..."
+                    value="{{ busca or '' }}">
+                    <button type="submit">Buscar</button>
+                </form>        
+            </div>
+        </td>
+
+    </tr>
+</table>
 
 <hr>
-
-<h2>Lista de Tarefas</h2>
+<h2>Lista de Tarefas 2.3</h2>
 
 {% if tarefas %}
     <ul>
